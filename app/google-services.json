@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "507635962132",
+    "firebase_url": "https://axped-d67d5.firebaseio.com",
+    "project_id": "axped-d67d5",
+    "storage_bucket": "axped-d67d5.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:507635962132:android:64a88bb99d27fca36b3201",
+        "android_client_info": {
+          "package_name": "com.example.cyrent"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "507635962132-hsarphmo23enkdn25bsr7ir2h8mpjqcb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB2UziMSQ4129yhjgSBYJFuuYX3HBhhbR0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "507635962132-hsarphmo23enkdn25bsr7ir2h8mpjqcb.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
