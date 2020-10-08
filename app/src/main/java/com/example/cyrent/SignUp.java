@@ -22,19 +22,22 @@ public class SignUp extends AppCompatActivity {
     private EditText regName;
     private EditText regEmail;
     private EditText regPassword;
+    private EditText regPhoneno;
     private EditText regPassword_verify;
     private Button regBtn;
     private FirebaseAuth mAuth;
+    FirebaseDatabase myDatabase;
    // private ProgressBar
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         mAuth = FirebaseAuth.getInstance();
+        myDatabase= FirebaseDatabase.getInstance();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
         regName=findViewById(R.id.Name);
         regEmail=findViewById(R.id.Email);
-        EditText regPhoneno = findViewById(R.id.PhoneNo);
+        regPhoneno = findViewById(R.id.PhoneNo);
         regPassword=findViewById(R.id.Password);
         regPassword_verify=findViewById(R.id.Password_verify);
         regBtn= (Button) findViewById(R.id.Register);
@@ -45,44 +48,45 @@ public class SignUp extends AppCompatActivity {
 
                String email = regEmail.getText().toString();
                String password = regPassword.getText().toString();
-               RegisterLender(email, password);
+               String fullName= regName.getText().toString();
+               String Phone_number=regPhoneno.getText().toString();
+               final SignUpUserData SignUpRecord =new SignUpUserData(email,password,fullName,Phone_number);
+               if (TextUtils.isEmpty(email))
+               {
+                   Toast.makeText(SignUp.this, "Enter Email", Toast.LENGTH_SHORT).show();
+               }
+               if (TextUtils.isEmpty(password))
+               {
+                   Toast.makeText(SignUp.this, "Enter Password", Toast.LENGTH_SHORT).show();
+               }
+
+               else  {
+
+
+
+                   mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                       @Override
+                       public void onComplete(@NonNull Task<AuthResult> task)
+                       {
+                           if (task.isSuccessful())
+                           {
+                               Toast.makeText(SignUp.this, "Register Successful", Toast.LENGTH_SHORT).show();
+                               myDatabase.getReference().child(mAuth.getUid()).setValue(SignUpRecord);
+
+                           }
+                           else
+                           {
+                               Toast.makeText(SignUp.this, "Register Unsuccessful", Toast.LENGTH_SHORT).show();
+
+                           }
+                       }
+                   });
+
+               }
+
+
            }
        });
     }
-    private void RegisterLender(String email, String password) {
 
-        if (TextUtils.isEmpty(email))
-        {
-            Toast.makeText(SignUp.this, "Enter Email", Toast.LENGTH_SHORT).show();
-        }
-        if (TextUtils.isEmpty(password))
-        {
-            Toast.makeText(SignUp.this, "Enter Password", Toast.LENGTH_SHORT).show();
-        }
-
-        else  {
-
-
-
-            mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                @Override
-                public void onComplete(@NonNull Task<AuthResult> task)
-                {
-                    if (task.isSuccessful())
-                    {
-                        Toast.makeText(SignUp.this, "Register Successful", Toast.LENGTH_SHORT).show();
-
-                    }
-                    else
-                    {
-                        Toast.makeText(SignUp.this, "Register Unsuccessful", Toast.LENGTH_SHORT).show();
-
-                    }
-                }
-            });
-
-        }
-
-
-    }
 }
