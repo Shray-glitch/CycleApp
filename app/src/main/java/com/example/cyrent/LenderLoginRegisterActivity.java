@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -41,11 +42,11 @@ public class LenderLoginRegisterActivity extends AppCompatActivity {
         loadingBar = new ProgressDialog(this);
         LenderRegisterButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View view) {
+                Intent intent=new  Intent(LenderLoginRegisterActivity.this,SignUp.class);
+                startActivity(intent);
 
-                String email = EmailLender.getText().toString();
-                String password = PasswordLender.getText().toString();
-                RegisterLender(email, password);
+
             }
         });
 
@@ -53,42 +54,5 @@ public class LenderLoginRegisterActivity extends AppCompatActivity {
 
     }
 
-    private void RegisterLender(String email, String password) {
 
-        if (TextUtils.isEmpty(email))
-        {
-            Toast.makeText(LenderLoginRegisterActivity.this, "Enter Email", Toast.LENGTH_SHORT).show();
-        }
-        if (TextUtils.isEmpty(password))
-        {
-            Toast.makeText(LenderLoginRegisterActivity.this, "Enter Password", Toast.LENGTH_SHORT).show();
-        }
-
-        else  {
-
-            loadingBar.setTitle("Lender Registration");
-            loadingBar.setMessage("Please Wait");
-            loadingBar.show();
-
-            mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                @Override
-                public void onComplete(@NonNull Task<AuthResult> task)
-                {
-                   if (task.isSuccessful())
-                   {
-                       Toast.makeText(LenderLoginRegisterActivity.this, "Register Successful", Toast.LENGTH_SHORT).show();
-                       loadingBar.dismiss();
-                   }
-                   else
-                       {
-                       Toast.makeText(LenderLoginRegisterActivity.this, "Register Unsuccessful", Toast.LENGTH_SHORT).show();
-                        loadingBar.dismiss();
-                       }
-                }
-            });
-
-        }
-
-
-    }
 }
