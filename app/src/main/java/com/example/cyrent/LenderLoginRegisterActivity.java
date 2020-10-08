@@ -25,8 +25,8 @@ public class LenderLoginRegisterActivity extends AppCompatActivity {
 
     private Button LenderLoginButton, LenderRegisterButton;
     private TextView LenderRegisterLink;
-    private EditText EmailLender, PasswordLender;
-    private ProgressBar loadingBar;
+    EditText EmailLender, PasswordLender;
+  //  private ProgressBar loadingBar;
 
     private FirebaseAuth mAuth;
 
@@ -42,7 +42,7 @@ public class LenderLoginRegisterActivity extends AppCompatActivity {
         //   LenderRegisterLink = (TextView) findViewById(R.id.)
         EmailLender = (EditText) findViewById(R.id.Email_lender);
         PasswordLender = (EditText) findViewById(R.id.Password_lender);
-        //  loadingBar = new ProgressDialog(this);
+        // loadingBar = new ProgressDialog(this);
 
         LenderRegisterButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -56,7 +56,7 @@ public class LenderLoginRegisterActivity extends AppCompatActivity {
 
         LenderLoginButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View view) {
                 String L_email = EmailLender.getText().toString();
                 String L_password = PasswordLender.getText().toString();
 
@@ -75,40 +75,35 @@ public class LenderLoginRegisterActivity extends AppCompatActivity {
                     return;
                 }
 
-                loadingBar.setVisibility(View.VISIBLE);
+               // loadingBar.setVisibility(View.VISIBLE);
 
-                SigninLender(L_email, L_password);
+                mAuth.signInWithEmailAndPassword(L_email,L_password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task)
+                    {
+                        if (task.isSuccessful())
+                        {
+                            Toast.makeText(LenderLoginRegisterActivity.this, "Login Successful", Toast.LENGTH_SHORT).show();
+
+                            Intent Lender_CycleDetail = new Intent(LenderLoginRegisterActivity.this, Lender_CycleDetail.class) ;
+                            startActivity(Lender_CycleDetail);
+
+                        }
+                        else
+                        {
+                            Toast.makeText(LenderLoginRegisterActivity.this, "Login Unsuccessful", Toast.LENGTH_SHORT).show();
+
+                            Intent intent = new Intent(LenderLoginRegisterActivity.this, SignUp.class) ;
+                            startActivity(intent);
+                        }
+                    }
+                });
+
 
 
             }
         });
     }
 
-    private void SigninLender(String L_email, String L_password)
-    {
 
-
-        mAuth.signInWithEmailAndPassword(L_email, L_password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-            @Override
-            public void onComplete(@NonNull Task<AuthResult> task)
-            {
-                if (task.isSuccessful())
-                {
-                    Toast.makeText(LenderLoginRegisterActivity.this, "Login Successful", Toast.LENGTH_SHORT).show();
-
-                    Intent Lender_CycleDetail = new Intent(LenderLoginRegisterActivity.this, Lender_CycleDetail.class) ;
-                    startActivity(Lender_CycleDetail);
-
-                }
-                else
-                {
-                    Toast.makeText(LenderLoginRegisterActivity.this, "Login Unsuccessful", Toast.LENGTH_SHORT).show();
-
-                    Intent SignUp = new Intent(LenderLoginRegisterActivity.this, SignUp.class) ;
-                    startActivity(SignUp);
-                }
-            }
-        });
-
-    }
 }
