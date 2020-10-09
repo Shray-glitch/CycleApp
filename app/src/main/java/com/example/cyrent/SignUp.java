@@ -3,6 +3,7 @@ package com.example.cyrent;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -71,7 +72,9 @@ public class SignUp extends AppCompatActivity {
                            if (task.isSuccessful())
                            {
                                Toast.makeText(SignUp.this, "Register Successful", Toast.LENGTH_SHORT).show();
-                               myDatabase.getReference().child(mAuth.getUid()).setValue(SignUpRecord);
+                               myDatabase.getReference().child("Users").child(mAuth.getUid()).setValue(SignUpRecord);
+                               Intent Lender_CycleDetail = new Intent(SignUp.this, Lender_CycleDetail.class) ;
+                               startActivity(Lender_CycleDetail);
 
                            }
                            else

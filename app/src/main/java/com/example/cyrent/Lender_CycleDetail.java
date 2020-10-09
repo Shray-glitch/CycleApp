@@ -3,9 +3,15 @@ package com.example.cyrent;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
 
 import com.airbnb.lottie.LottieAnimationView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class Lender_CycleDetail extends AppCompatActivity {
     boolean isCheckDone1 = false;
@@ -14,10 +20,34 @@ public class Lender_CycleDetail extends AppCompatActivity {
     boolean isCheckDone4 = false;
     boolean isCheckDone5 = false;
     boolean isCheckDone6 = false;
+    private EditText CycleBrand;
+    private EditText CycleAge;
+    private FirebaseAuth mAuth;
+    private Button goBtn;
+    FirebaseDatabase myDatabase;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mAuth = FirebaseAuth.getInstance();
+        myDatabase= FirebaseDatabase.getInstance();
         setContentView(R.layout.activity_lender__cycle_detail);
+
+        CycleBrand=findViewById(R.id.brand);
+        CycleAge=findViewById(R.id.age);
+        goBtn= (Button) findViewById(R.id.go_btn);
+
+        String CycleBrandData=CycleBrand.getText().toString();
+        String CycleAgeData=CycleAge.getText().toString();
+        boolean  GearData=isCheckDone1;
+        boolean  BottleHolderData=isCheckDone1;
+        boolean  HeadLightData=isCheckDone1;
+        boolean  MudGuardData=isCheckDone1;
+        boolean  BellData=isCheckDone1;
+        boolean  CarrierData=isCheckDone1;
+
+
+
+
         final LottieAnimationView lottieCheckDone1=findViewById(R.id.lottieCheck1);
         lottieCheckDone1.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -105,6 +135,31 @@ public class Lender_CycleDetail extends AppCompatActivity {
                     lottieCheckDone6.setSpeed(3);
                     lottieCheckDone6.playAnimation();
                     isCheckDone6=true;
+                }
+            }
+        });
+
+        goBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String CycleBrandData=CycleBrand.getText().toString();
+                String CycleAgeData=CycleAge.getText().toString();
+                boolean  GearData=isCheckDone1;
+                boolean  BottleHolderData=isCheckDone1;
+                boolean  HeadLightData=isCheckDone1;
+                boolean  MudGuardData=isCheckDone1;
+                boolean  BellData=isCheckDone1;
+                boolean  CarrierData=isCheckDone1;
+
+                final CycleDetailUserData cycleDetailRecord= new CycleDetailUserData(CycleBrandData,CycleAgeData,GearData,BottleHolderData,HeadLightData,MudGuardData,BellData,CarrierData);
+
+                if (CycleBrandData.isEmpty())
+                {
+                    Toast.makeText(Lender_CycleDetail.this, "Enter Cycle Brand", Toast.LENGTH_SHORT).show();
+                }
+                else{
+                    myDatabase.getReference().child("Users").child(mAuth.getUid()).child("CycleData").setValue(cycleDetailRecord);
+
                 }
             }
         });
