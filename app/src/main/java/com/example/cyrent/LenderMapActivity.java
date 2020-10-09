@@ -12,8 +12,10 @@ import android.os.Bundle;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApi;
+import com.google.android.gms.common.api.GoogleApi.Settings.Builder;
 import com.google.android.gms.common.api.GoogleApiActivity;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -24,13 +26,13 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 public class LenderMapActivity extends FragmentActivity implements OnMapReadyCallback,
-       // GoogleApi.ConnectionCallbacks,
+      //  GoogleApiClient.ConnectionCallbacks,
 
-        GoogleApiClient.OnConnectionFailedListener,
+      //  GoogleApiClient.OnConnectionFailedListener,
         com.google.android.gms.location.LocationListener {
 
     private GoogleMap mMap;
-    GoogleApiClient googleApiClient;
+    GoogleApi googleApiClient;
     Location lastLocation;
     LocationRequest locationRequest;
 
@@ -42,6 +44,7 @@ public class LenderMapActivity extends FragmentActivity implements OnMapReadyCal
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
+        assert mapFragment != null;
         mapFragment.getMapAsync(this);
     }
 
@@ -74,7 +77,20 @@ public class LenderMapActivity extends FragmentActivity implements OnMapReadyCal
 
             return;
         }
-        LocationServices.FusedLocationProviderClient.requestLocationUpdates(googleApiClient, locationRequest, this);
+
+
+        fusedLocationClient.getLastLocation().addOnSuccessListener(requireActivity(), location -> {
+            if (location != null) {
+                // Logic to handle location object
+            } else {
+                // Handle null case or Request periodic location update https://developer.android.com/training/location/receive-location-updates
+            }
+        });
+
+        FusedLocationProviderClient fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext());
+
+
+        LocationServices.Fused.requestLocationUpdates(googleApiClient, locationRequest, this);
 // Api
     }
 
@@ -101,7 +117,7 @@ public class LenderMapActivity extends FragmentActivity implements OnMapReadyCal
 
     protected synchronized void buildGoogleApiClient()
     {
-        googleApiClient = new GoogleApiClient.Builder(this)
+        googleApiClient = new Builder(this)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
                 .addApi(LocationServices.API)
