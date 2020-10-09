@@ -13,12 +13,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Lender"
-        android:id="@+id/lender" />
+        android:id="@+id/llender" />
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Rider"
-        android:id="@+id/rider" />
+        android:id="@+id/rkider" />
 
 
 
