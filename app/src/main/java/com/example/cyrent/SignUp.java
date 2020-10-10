@@ -51,6 +51,7 @@ public class SignUp extends AppCompatActivity {
                String password = regPassword.getText().toString();
                String fullName= regName.getText().toString();
                String Phone_number=regPhoneno.getText().toString();
+               String password_same=regPassword_verify.getText().toString();
                final SignUpUserData SignUpRecord =new SignUpUserData(email,password,fullName,Phone_number);
                if (TextUtils.isEmpty(email))
                {
@@ -59,6 +60,9 @@ public class SignUp extends AppCompatActivity {
                if (TextUtils.isEmpty(password))
                {
                    Toast.makeText(SignUp.this, "Enter Password", Toast.LENGTH_SHORT).show();
+               }
+               if(password!=password_same){
+                   Toast.makeText(SignUp.this, "Password should match", Toast.LENGTH_SHORT).show();
                }
 
                else  {
