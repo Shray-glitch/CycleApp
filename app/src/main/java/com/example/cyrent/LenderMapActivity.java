@@ -1,130 +1,106 @@
 package com.example.cyrent;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
-import androidx.fragment.app.FragmentActivity;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApi;
-import com.google.android.gms.common.api.GoogleApi.Settings.Builder;
-import com.google.android.gms.common.api.GoogleApiActivity;
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 
-public class LenderMapActivity extends FragmentActivity implements OnMapReadyCallback,
-      //  GoogleApiClient.ConnectionCallbacks,
+public class LenderMapActivity extends AppCompatActivity {
 
-      //  GoogleApiClient.OnConnectionFailedListener,
-        com.google.android.gms.location.LocationListener {
-
-    private GoogleMap mMap;
-    GoogleApi googleApiClient;
-    Location lastLocation;
-    LocationRequest locationRequest;
-
+    // initialize variable
+    SupportMapFragment supportMapFragment;
+    FusedLocationProviderClient client;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lender_map);
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
-        assert mapFragment != null;
-        mapFragment.getMapAsync(this);
-    }
 
 
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
-        mMap = googleMap;
+        //assign variable
+        supportMapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.google_map);
 
-        buildGoogleApiClient();
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        client = LocationServices.getFusedLocationProviderClient(this);
 
+        //Check permission
+        if (ActivityCompat.checkSelfPermission(LenderMapActivity.this,
+                Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
 
-
-            return;
+            getCurrentLocation();
         }
-        mMap.setMyLocationEnabled(true);
+        else{
+            ActivityCompat.requestPermissions(LenderMapActivity.this,new String[]{Manifest.permission.ACCESS_FINE_LOCATION},44);
+        }
 
     }
 
-    @Override
-    public void onConnected(@Nullable Bundle bundle) {
-        locationRequest = new LocationRequest();
-        locationRequest.setInterval(1000);
-        locationRequest.setFastestInterval(1000);
-        locationRequest.setPriority(locationRequest.PRIORITY_HIGH_ACCURACY);
+    private void getCurrentLocation() {
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-
-
-
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
             return;
         }
+        Task<Location> task = client.getLastLocation();
+        task.addOnSuccessListener(new OnSuccessListener<Location>() {
+            @Override
+            public void onSuccess(final Location location) {
+                //WHEN SUCcESS
+                if(location != null){
 
+                    supportMapFragment.getMapAsync(new OnMapReadyCallback() {
+                        @Override
+                        public void onMapReady(GoogleMap googleMap) {
 
-        fusedLocationClient.getLastLocation().addOnSuccessListener(requireActivity(), location -> {
-            if (location != null) {
-                // Logic to handle location object
-            } else {
-                // Handle null case or Request periodic location update https://developer.android.com/training/location/receive-location-updates
+                            // initialize lat lng
+                            LatLng latLng = new LatLng(location.getLatitude(),location.getLongitude());
+                            // create marker options
+                            MarkerOptions options = new MarkerOptions().position(latLng).title("I am there");
+
+                            //Zoom Map
+                            googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,10));
+                            // add marker
+                            googleMap.addMarker(options);
+                        }
+                    });
+                }
             }
         });
 
-        FusedLocationProviderClient fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext());
-
-
-        LocationServices.Fused.requestLocationUpdates(googleApiClient, locationRequest, this);
-// Api
     }
 
     @Override
-    public void onConnectionSuspended(int i) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if(requestCode == 44){
+            if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                getCurrentLocation();
 
+            }
+
+        }
     }
-
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-
-    }
-
-    @Override
-    public void onLocationChanged(Location location)
-    {
-      lastLocation = location;
-
-      LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-      mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-      mMap.animateCamera(CameraUpdateFactory.zoomTo(12));
-    }
-
-
-    protected synchronized void buildGoogleApiClient()
-    {
-        googleApiClient = new Builder(this)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .addApi(LocationServices.API)
-                .build();
-
-        googleApiClient.connect();
-    }
-
-
 }

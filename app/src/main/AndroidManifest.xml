@@ -28,11 +28,10 @@
         -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="@string/google_maps_key" />
+            android:value="AIzaSyC28Pqflj2SMdjjo0Ab-lG_13EiA4F_dUE" />
 
         <activity
-            android:name=".LenderMapActivity"
-            android:label="@string/title_activity_lender_map" />
+            android:name=".LenderMapActivity"/>
         <activity android:name=".SignUp" />
         <activity android:name=".Lender_CycleDetail" />
         <activity android:name=".RiderLoginRegisterActivity" />
