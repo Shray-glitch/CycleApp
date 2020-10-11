@@ -60,7 +60,7 @@ public class LenderLoginRegisterActivity extends AppCompatActivity {
        MapButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent MapActivity = new Intent(LenderLoginRegisterActivity.this, LenderMapActivity.class) ;
+                Intent MapActivity = new Intent(LenderLoginRegisterActivity.this, LenderHomeActivity.class) ;
                 startActivity(MapActivity);
             }
         });
