@@ -67,6 +67,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         homeViewModel = new ViewModelProvider(this).get(HomeViewModel.class);
         View root = inflater.inflate(R.layout.fragment_home, container, false);
 
+
         init();
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
