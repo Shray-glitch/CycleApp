@@ -38,9 +38,9 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".SignUp" />
         <activity android:name=".Lender_CycleDetail" />
-        <activity android:name=".RiderLoginRegisterActivity" />
-        <activity android:name=".LenderLoginRegisterActivity" />
-        <activity android:name=".SplashScreen">
+
+        <activity android:name=".SplashScreen"
+            android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
