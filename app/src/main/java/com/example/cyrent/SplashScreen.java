@@ -153,13 +153,14 @@ public class SplashScreen extends AppCompatActivity {
 
     }
 
-    private void showRegisterLayout() {
+    private void showRegisterLayout()
+    {
         AlertDialog.Builder builder=new AlertDialog.Builder(this,R.style.DialogTheme);
         View itemView = LayoutInflater.from(this).inflate(R.layout.activity_sign_up,null);
 
-        EditText edt_first_name=itemView.findViewById(R.id.FirstName);
-        EditText edt_last_name=itemView.findViewById(R.id.LastName);
-        EditText edt_phone=itemView.findViewById(R.id.PhoneNo);
+        TextInputEditText edt_first_name=itemView.findViewById(R.id.FirstName);
+        TextInputEditText edt_last_name=itemView.findViewById(R.id.LastName);
+        TextInputEditText edt_phone=itemView.findViewById(R.id.PhoneNo);
 
         Button btn_continue = itemView.findViewById(R.id.continue_btn);
 
