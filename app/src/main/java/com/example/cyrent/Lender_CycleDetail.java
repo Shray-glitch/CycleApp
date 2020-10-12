@@ -2,6 +2,7 @@ package com.example.cyrent;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -159,6 +160,8 @@ public class Lender_CycleDetail extends AppCompatActivity {
                 }
                 else{
                     myDatabase.getReference().child("Users").child(mAuth.getUid()).child("CycleData").setValue(cycleDetailRecord);
+                    Intent intent = new Intent(Lender_CycleDetail.this, LenderHomeActivity.class) ;
+                    startActivity(intent);
 
                 }
             }

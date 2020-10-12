@@ -1,4 +1,4 @@
-package com.example.cyrent;
+/*package com.example.cyrent;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -9,14 +9,13 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.example.cyrent.Model.DriverInfomodel;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 public class SignUp extends AppCompatActivity {
@@ -52,7 +51,7 @@ public class SignUp extends AppCompatActivity {
                String fullName= regName.getText().toString();
                String Phone_number=regPhoneno.getText().toString();
                String password_same=regPassword_verify.getText().toString();
-               final SignUpUserData SignUpRecord =new SignUpUserData(email,password,fullName,Phone_number);
+               final DriverInfomodel SignUpRecord =new DriverInfomodel(email,password,fullName,Phone_number);
                if (TextUtils.isEmpty(email))
                {
                    Toast.makeText(SignUp.this, "Enter Email", Toast.LENGTH_SHORT).show();
@@ -96,4 +95,4 @@ public class SignUp extends AppCompatActivity {
        });
     }
 
-}
+}*/

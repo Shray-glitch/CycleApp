@@ -1,6 +1,7 @@
-package com.example.cyrent;
+/*package com.example.cyrent;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ProgressDialog;
@@ -15,107 +16,98 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.firebase.ui.auth.AuthMethodPickerLayout;
+import com.firebase.ui.auth.AuthUI;
+import com.firebase.ui.auth.IdpResponse;
+import com.firebase.ui.auth.data.client.AuthUiInitProvider;
+import com.firebase.ui.auth.ui.idp.AuthMethodPickerActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import java.lang.reflect.Array;
+import java.util.Arrays;
+import java.util.List;
+
 public class LenderLoginRegisterActivity extends AppCompatActivity {
 
-    private Button LenderLoginButton, LenderRegisterButton, MapButton;
-    private TextView LenderRegisterLink;
-    EditText EmailLender, PasswordLender;
-  //  private ProgressBar loadingBar;
 
+    private final static int LOGIN_REQUEST_CODE= 7171;
+    private List<AuthUI.IdpConfig> providers;
+    private FirebaseAuth.AuthStateListener listener;
     private FirebaseAuth mAuth;
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mAuth.addAuthStateListener(listener);
+    }
+
+    @Override
+    protected void onStop() {
+        if(mAuth !=null && listener !=null)
+            mAuth.removeAuthStateListener(listener);
+        super.onStop();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_lender_login_register);
+     //   setContentView(R.layout.activity_lender_login_register);
+         init();
 
         mAuth = FirebaseAuth.getInstance();
-        LenderLoginButton = (Button) findViewById(R.id.login);
 
-        LenderRegisterButton = (Button) findViewById(R.id.register);
-        //   LenderRegisterLink = (TextView) findViewById(R.id.)
-        EmailLender = (EditText) findViewById(R.id.Email_lender);
-        PasswordLender = (EditText) findViewById(R.id.Password_lender);
-        //  loadingBar = new ProgressDialog(this);
-        MapButton = (Button) findViewById(R.id.map);
-        // loadingBar = new ProgressDialog(this);
-
-        LenderRegisterButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(LenderLoginRegisterActivity.this, SignUp.class);
-                startActivity(intent);
-
-
-            }
-        });
-
-
-       MapButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent MapActivity = new Intent(LenderLoginRegisterActivity.this, LenderHomeActivity.class) ;
-                startActivity(MapActivity);
-            }
-        });
-
-
-        LenderLoginButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String L_email = EmailLender.getText().toString();
-                String L_password = PasswordLender.getText().toString();
-
-                if (TextUtils.isEmpty(L_email)) {
-                    Toast.makeText(getApplicationContext(), "Enter email address!", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                if (TextUtils.isEmpty(L_password)) {
-                    Toast.makeText(getApplicationContext(), "Enter password!", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                if (L_password.length() < 6) {
-                    Toast.makeText(getApplicationContext(), "Password too short, enter minimum 6 characters!", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-               // loadingBar.setVisibility(View.VISIBLE);
-
-                mAuth.signInWithEmailAndPassword(L_email,L_password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task)
-                    {
-                        if (task.isSuccessful())
-                        {
-                            Toast.makeText(LenderLoginRegisterActivity.this, "Login Successful", Toast.LENGTH_SHORT).show();
-
-                            Intent Lender_CycleDetail = new Intent(LenderLoginRegisterActivity.this, Lender_CycleDetail.class) ;
-                            startActivity(Lender_CycleDetail);
-
-                        }
-                        else
-                        {
-                            Toast.makeText(LenderLoginRegisterActivity.this, "Login Unsuccessful", Toast.LENGTH_SHORT).show();
-
-                            Intent intent = new Intent(LenderLoginRegisterActivity.this, SignUp.class) ;
-                            startActivity(intent);
-                        }
-                    }
-                });
-
-
-
-            }
-        });
     }
 
+    private void init(){
+        providers= Arrays.asList(
+                new AuthUI.IdpConfig.PhoneBuilder().build(),
+                new AuthUI.IdpConfig.GoogleBuilder().build());
+        mAuth = FirebaseAuth.getInstance();
+listener=myFirebaseAuth -> {
+   FirebaseUser user= myFirebaseAuth.getCurrentUser();
+   if(user !=null){
 
-}
+       Intent Lender_CycleDetail = new Intent(LenderLoginRegisterActivity.this, LenderHomeActivity.class) ;
+       startActivity(Lender_CycleDetail);
+
+   }
+   else
+       showLoginLayout();
+     };
+    }
+
+    private void showLoginLayout(){
+        AuthMethodPickerLayout authMethodPickerLayout=new AuthMethodPickerLayout
+        .Builder(R.layout.activity_lender_login_register)
+        .setPhoneButtonId(R.id.btn_phone_signin)
+        .setGoogleButtonId(R.id.btn_google_signin)
+        .build();
+
+        startActivityForResult(AuthUI.getInstance()
+        .createSignInIntentBuilder()
+        .setAuthMethodPickerLayout(authMethodPickerLayout)
+        .setIsSmartLockEnabled(false)
+        .setAvailableProviders(providers)
+        .build(),LOGIN_REQUEST_CODE);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == LOGIN_REQUEST_CODE){
+            IdpResponse response=IdpResponse.fromResultIntent(data);
+            if(requestCode == RESULT_OK)
+            {
+                FirebaseUser user = mAuth.getInstance().getCurrentUser();
+            }
+            else
+            {
+                Toast.makeText(this,"[ERROR]"+response.getError().getMessage(),Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+}*/

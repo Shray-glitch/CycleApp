@@ -1,57 +1,251 @@
 package com.example.cyrent;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.TextUtils;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
+import com.example.cyrent.Model.DriverInfomodel;
+import com.firebase.ui.auth.AuthMethodPickerLayout;
+import com.firebase.ui.auth.AuthUI;
+import com.firebase.ui.auth.IdpResponse;
+import com.google.android.gms.common.internal.service.Common;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import io.reactivex.Completable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Action;
+
+import static com.google.android.gms.common.internal.service.Common.*;
+
+//mAuth==firebaseAuth
 public class SplashScreen extends AppCompatActivity {
 
-    RelativeLayout rellay1, rellay2;
-    private Button mLender, mRider;
+    private final static int LOGIN_REQUEST_CODE= 7171;
+    private List<AuthUI.IdpConfig> providers;
+    private FirebaseAuth.AuthStateListener listener;
+    private FirebaseAuth mAuth;
 
-    Handler handler = new Handler();
-    Runnable runnable = new Runnable() {
-        @Override
-        public void run() {
-            rellay1.setVisibility(View.VISIBLE);
-        //    rellay2.setVisibility(View.VISIBLE);
-        }
-    };
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash_screen);
-        rellay1 = (RelativeLayout) findViewById(R.id.rellay1);
-       // rellay2 = (RelativeLayout) findViewById(R.id.rellay2);
+        mAuth = FirebaseAuth.getInstance();
+        init();
+        delaySplashScreen();
 
-        handler.postDelayed(runnable, 2000); //2000 is the timeout for the splash
+    }
+
+    @BindView(R.id.progress_bar)
+    ProgressBar progress_Bar;
+    FirebaseDatabase database;
+    DatabaseReference driverInfoRef;
+
+    private void delaySplashScreen(){
+        progress_Bar.setVisibility(View.VISIBLE);
+        Completable.timer(3, TimeUnit.SECONDS, AndroidSchedulers.mainThread())
+                .subscribe(new Action() {
+                    @Override
+                    public void run() throws Exception {
+                        mAuth.addAuthStateListener(listener);
+
+                    }
+                });
+
+    }
+
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mAuth.addAuthStateListener(listener);
+    }
+
+    @Override
+    protected void onStop() {
+        if(mAuth !=null && listener !=null)
+            mAuth.removeAuthStateListener(listener);
+        super.onStop();
+    }
 
 
 
-        mLender = (Button) findViewById(R.id.lender);
-        mRider = (Button) findViewById(R.id.rider);
+    private void init(){
+        ButterKnife.bind(this);
 
-        mLender.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent LoginRegisterLenderIntent = new Intent(SplashScreen.this, LenderLoginRegisterActivity.class) ;
-                startActivity(LoginRegisterLenderIntent);
+        
+        database= FirebaseDatabase.getInstance();
+        driverInfoRef=database.getReference(com.example.cyrent.Common.DRIVER_INFO_REFERENCE);
+
+
+
+        providers= Arrays.asList(
+                new AuthUI.IdpConfig.PhoneBuilder().build(),
+                new AuthUI.IdpConfig.GoogleBuilder().build());
+        mAuth = FirebaseAuth.getInstance();
+        listener=myFirebaseAuth -> {
+            FirebaseUser user= myFirebaseAuth.getCurrentUser();
+            if(user !=null){
+                checkUserFromFirebase();
+                Intent Lender_CycleDetail = new Intent(SplashScreen.this, LenderHomeActivity.class) ;
+                startActivity(Lender_CycleDetail);
+
+            }
+            else
+                showLoginLayout();
+        };
+    }
+
+    private void checkUserFromFirebase() {
+        driverInfoRef.child(mAuth.getInstance().getCurrentUser().getUid())
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if(snapshot.exists())
+                        {
+                            Toast.makeText(SplashScreen.this,"User already registered",Toast.LENGTH_SHORT).show();
+
+
+                        }
+                        else
+                        {
+                            showRegisterLayout();
+
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        Toast.makeText(SplashScreen.this,""+error.getMessage(),Toast.LENGTH_SHORT).show();
+
+                    }
+                });
+
+
+    }
+
+    private void showRegisterLayout() {
+        AlertDialog.Builder builder=new AlertDialog.Builder(this,R.style.DialogTheme);
+        View itemView = LayoutInflater.from(this).inflate(R.layout.activity_sign_up,null);
+
+        EditText edt_first_name=itemView.findViewById(R.id.FirstName);
+        EditText edt_last_name=itemView.findViewById(R.id.LastName);
+        EditText edt_phone=itemView.findViewById(R.id.PhoneNo);
+
+        Button btn_continue = itemView.findViewById(R.id.continue_btn);
+
+        //set data
+        if(mAuth.getInstance().getCurrentUser().getPhoneNumber()!=null &&
+        !TextUtils.isEmpty(mAuth.getInstance().getCurrentUser().getPhoneNumber()))
+            edt_phone.setText(mAuth.getInstance().getCurrentUser().getPhoneNumber());
+
+        //set view
+        builder.setView(itemView);
+        AlertDialog dialog=builder.create();
+
+        btn_continue.setOnClickListener(view ->{
+            if(TextUtils.isEmpty((edt_first_name.getText().toString())))
+            {
+                Toast.makeText(this,"Please enter first name",Toast.LENGTH_SHORT).show();
+                return;
+            }
+            else if(TextUtils.isEmpty((edt_last_name.getText().toString())))
+            {
+                Toast.makeText(this,"Please enter last name",Toast.LENGTH_SHORT).show();
+                return;
+            }
+            else if(TextUtils.isEmpty((edt_phone.getText().toString())))
+            {
+                Toast.makeText(this,"Please enter Phone number",Toast.LENGTH_SHORT).show();
+                return;
+            }
+            else
+            {
+                DriverInfomodel model=new DriverInfomodel();
+                model.setFirst_Name(edt_first_name.getText().toString());
+                model.setLast_Name(edt_last_name.getText().toString());
+                model.setPhoneNumber(edt_phone.getText().toString());
+                model.setRating(0.0);
+
+                driverInfoRef.child(mAuth.getInstance().getCurrentUser().getUid())
+                        .setValue(model)
+                        .addOnFailureListener(e ->
+                        {
+                            dialog.dismiss();
+                            Toast.makeText(SplashScreen.this, e.getMessage(),Toast.LENGTH_SHORT).show();
+                        })
+                        .addOnSuccessListener(aVoid -> {
+                            Toast.makeText(this,"Register Succesfully!",Toast.LENGTH_SHORT).show();
+                            dialog.dismiss();
+
+                        });
+
+
+
+
             }
         });
 
-        mRider.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent LoginRegisterRiderIntent = new Intent(SplashScreen.this, RiderLoginRegisterActivity.class) ;
-                startActivity(LoginRegisterRiderIntent);
+
+    }
+
+    private void showLoginLayout(){
+        AuthMethodPickerLayout authMethodPickerLayout=new AuthMethodPickerLayout
+                .Builder(R.layout.activity_lender_login_register)
+                .setPhoneButtonId(R.id.btn_phone_signin)
+                .setGoogleButtonId(R.id.btn_google_signin)
+                .build();
+
+        startActivityForResult(AuthUI.getInstance()
+                .createSignInIntentBuilder()
+                .setAuthMethodPickerLayout(authMethodPickerLayout)
+                .setIsSmartLockEnabled(false)
+                .setAvailableProviders(providers)
+                .build(),LOGIN_REQUEST_CODE);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == LOGIN_REQUEST_CODE){
+            IdpResponse response=IdpResponse.fromResultIntent(data);
+            if(requestCode == RESULT_OK)
+            {
+                FirebaseUser user = mAuth.getInstance().getCurrentUser();
             }
-        });
+            else
+            {
+                Toast.makeText(this,"[ERROR]"+response.getError().getMessage(),Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 }
