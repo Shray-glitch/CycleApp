@@ -6,7 +6,6 @@ android:id="@+id/relativeLayout"
 android:layout_width="match_parent"
 android:layout_height="match_parent"
 android:background="@drawable/grad_bg"
-tools:context=".SignUp"
 android:padding="20sp">
 
 <TextView
@@ -41,7 +40,7 @@ android:padding="20sp">
 
 
 
-        <EditText
+        <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/FirstName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -53,7 +52,7 @@ android:padding="20sp">
             android:hint="First name"
             android:textColorHint="#f5f5f7"
             android:inputType="textPersonName" />
-        <EditText
+        <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/LastName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -85,7 +84,7 @@ android:padding="20sp">
             android:textColor="#000"
             android:textSize="15sp" />
 
-        <EditText
+        <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/PhoneNo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
