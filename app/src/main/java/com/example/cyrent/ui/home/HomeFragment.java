@@ -1,4 +1,4 @@
-package com.example.cyrent.ui.home;
+/*package com.example.cyrent.ui.home;
 
 import android.Manifest;
 import android.location.Location;
@@ -226,4 +226,4 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         }).check();
 
     }
-}
+}*/

@@ -35,9 +35,7 @@
         <activity
             android:name=".LenderHomeActivity"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".Lender_CycleDetail"
-            android:theme="@style/AppTheme.NoActionBar"/>
-
+        <activity android:name=".Lender_CycleDetail" />
         <activity android:name=".SplashScreen"
             android:theme="@style/SplashTheme">
             <intent-filter>

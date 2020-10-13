@@ -5,6 +5,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -45,59 +46,66 @@ import io.reactivex.functions.Action;
 
 import static com.google.android.gms.common.internal.service.Common.*;
 
-//mAuth==firebaseAuth
+
 public class SplashScreen extends AppCompatActivity {
 
-    private final static int LOGIN_REQUEST_CODE= 7171;
-    private List<AuthUI.IdpConfig> providers;
-    private FirebaseAuth.AuthStateListener listener;
-    private FirebaseAuth mAuth;
+   private final static int LOGIN_REQUEST_CODE= 7171;
+   private List<AuthUI.IdpConfig> providers;
+   private FirebaseAuth.AuthStateListener listener;
+   private FirebaseAuth firebaseAuth;
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        firebaseAuth.addAuthStateListener(listener);
+    }
+
+    @Override
+    protected void onStop() {
+        if(firebaseAuth !=null && listener !=null)
+            firebaseAuth.removeAuthStateListener(listener);
+        super.onStop();
+    }
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash_screen);
-        mAuth = FirebaseAuth.getInstance();
-        init();
-        delaySplashScreen();
+       // mAuth = FirebaseAuth.getInstance();
+
+       // delaySplashScreen();
+       init();
 
     }
 
-    @BindView(R.id.progress_bar)
+   @BindView(R.id.progress_bar)
     ProgressBar progress_Bar;
     FirebaseDatabase database;
     DatabaseReference driverInfoRef;
 
+
     private void delaySplashScreen(){
-        progress_Bar.setVisibility(View.VISIBLE);
-        Completable.timer(2, TimeUnit.SECONDS, AndroidSchedulers.mainThread())
+         progress_Bar.setVisibility(View.VISIBLE);
+        Completable.timer(3,TimeUnit.SECONDS,
+                AndroidSchedulers.mainThread())
                 .subscribe(new Action() {
                     @Override
                     public void run() throws Exception {
-                        mAuth.addAuthStateListener(listener);
-
+                        Toast.makeText(SplashScreen.this,"Welcome"+FirebaseAuth.getInstance().getCurrentUser().getUid(),Toast.LENGTH_SHORT).show();
                     }
                 });
 
     }
 
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        mAuth.addAuthStateListener(listener);
-    }
-
-    @Override
-    protected void onStop() {
-        if(mAuth !=null && listener !=null)
-            mAuth.removeAuthStateListener(listener);
-        super.onStop();
-    }
 
 
+
+
+  /*
+
+*/
 
     private void init(){
         ButterKnife.bind(this);
@@ -111,13 +119,12 @@ public class SplashScreen extends AppCompatActivity {
         providers= Arrays.asList(
                 new AuthUI.IdpConfig.PhoneBuilder().build(),
                 new AuthUI.IdpConfig.GoogleBuilder().build());
-        mAuth = FirebaseAuth.getInstance();
+        firebaseAuth = FirebaseAuth.getInstance();
         listener=myFirebaseAuth -> {
             FirebaseUser user= myFirebaseAuth.getCurrentUser();
-            if(user !=null){
-                checkUserFromFirebase();
-
-
+            if(user !=null)
+            {
+               checkUserFromFirebase();
             }
             else
                 showLoginLayout();
@@ -132,6 +139,8 @@ public class SplashScreen extends AppCompatActivity {
                         if(snapshot.exists())
                         {
                             Toast.makeText(SplashScreen.this,"User already registered",Toast.LENGTH_SHORT).show();
+                           // DriverInfomodel driverInfomodel=snapshot.getValue(DriverInfomodel.class);
+                           // goToHomeActivity(driverInfomodel);
 
 
                         }
@@ -151,17 +160,23 @@ public class SplashScreen extends AppCompatActivity {
 
 
     }
-
+/*
+    private void goToHomeActivity(DriverInfomodel driverInfomodel) {
+        com.example.cyrent.Common.currentUser=driverInfomodel;
+        startActivity(new Intent(SplashScreen.this,LenderHomeActivity.class));
+        finish();
+    }
+*/
     private void showRegisterLayout()
     {
         AlertDialog.Builder builder=new AlertDialog.Builder(this,R.style.DialogTheme);
         View itemView = LayoutInflater.from(this).inflate(R.layout.activity_sign_up,null);
 
-        TextInputEditText edt_first_name=(TextInputEditText)itemView.findViewById(R.id.FirstName);
-        TextInputEditText edt_last_name=(TextInputEditText)itemView.findViewById(R.id.LastName);
-        TextInputEditText edt_phone=(TextInputEditText)itemView.findViewById(R.id.PhoneNo);
+        TextInputEditText edt_first_name=itemView.findViewById(R.id.FirstName);
+        TextInputEditText edt_last_name=itemView.findViewById(R.id.LastName);
+        TextInputEditText edt_phone=itemView.findViewById(R.id.PhoneNo);
 
-        Button btn_continue = (Button) itemView.findViewById(R.id.continue_btn);
+        Button btn_continue = itemView.findViewById(R.id.continue_btn);
 
         //set data
         if(FirebaseAuth.getInstance().getCurrentUser().getPhoneNumber()!=null &&
@@ -171,6 +186,7 @@ public class SplashScreen extends AppCompatActivity {
         //set view
         builder.setView(itemView);
         AlertDialog dialog=builder.create();
+        dialog.show();
 
         btn_continue.setOnClickListener(view ->{
             if(TextUtils.isEmpty((edt_first_name.getText().toString())))
@@ -198,15 +214,21 @@ public class SplashScreen extends AppCompatActivity {
 
                 driverInfoRef.child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                         .setValue(model)
-                        .addOnFailureListener(e ->
-                        {
-                            dialog.dismiss();
-                            Toast.makeText(SplashScreen.this, e.getMessage(),Toast.LENGTH_SHORT).show();
-                        })
-                        .addOnSuccessListener(aVoid -> {
-                            Toast.makeText(this,"Register Succesfully!",Toast.LENGTH_SHORT).show();
-                            dialog.dismiss();
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                dialog.dismiss();
+                                Toast.makeText(SplashScreen.this, e.getMessage(),Toast.LENGTH_SHORT).show();
 
+                            }
+                        })
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                Toast.makeText(SplashScreen.this,"Register Succesfully!",Toast.LENGTH_SHORT).show();
+                                dialog.dismiss();
+
+                            }
                         });
 
 
@@ -218,7 +240,7 @@ public class SplashScreen extends AppCompatActivity {
 
     }
 
-    private void showLoginLayout(){
+   private void showLoginLayout(){
         AuthMethodPickerLayout authMethodPickerLayout=new AuthMethodPickerLayout
                 .Builder(R.layout.activity_lender_login_register)
                 .setPhoneButtonId(R.id.btn_phone_signin)
@@ -240,7 +262,7 @@ public class SplashScreen extends AppCompatActivity {
             IdpResponse response=IdpResponse.fromResultIntent(data);
             if(requestCode == RESULT_OK)
             {
-                FirebaseUser user = mAuth.getInstance().getCurrentUser();
+                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
             }
             else
             {

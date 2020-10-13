@@ -4,6 +4,10 @@ public class DriverInfomodel {
    private String first_Name,last_Name,PhoneNumber;
    private double rating;
 
+    public DriverInfomodel() {
+    }
+
+
     public String getFirst_Name() {
         return first_Name;
     }
