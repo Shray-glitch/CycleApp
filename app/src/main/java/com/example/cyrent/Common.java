@@ -7,15 +7,15 @@ public class Common {
    public static final String DRIVER_LOCATION_REFERENCES ="LenderLocation" ;
     public static DriverInfomodel currentUser;
 
-    /*
-      public static String buildWelcomeMessage() {
+
+      public static CharSequence buildWelcomeMessage() {   // string not working so CharSequence
         if(Common.currentUser != null)
         {
             return new StringBuilder("Welcome ")
-                    .append(Common.currentUser.getFirstName())
+                    .append(Common.currentUser.getFirst_Name())
                     .append(" ")
-                    .append(Common.currentUser.getLastName());
+                    .append(Common.currentUser.getLast_Name());
         }
         else return "";
-    } */
+    }
 }

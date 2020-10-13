@@ -103,8 +103,8 @@ public class LenderHomeActivity extends AppCompatActivity {
         TextView txt_phone = (TextView)headerView.findViewById(R.id.txt_phone);
       //  TextView txt_star = (TextView)headerView.findViewById(R.id.txt_name);
 
-     //   txt_name.setText(Common.buildWelcomeMessage());
-      //  txt_phone.setText(Common.currentUser!=null ? Common.currentUser.getPhoneNumber() : "");
+        txt_name.setText(Common.buildWelcomeMessage());
+        txt_phone.setText(Common.currentUser!=null ? Common.currentUser.getPhoneNumber() : "");
 
 
 
