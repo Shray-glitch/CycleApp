@@ -1,4 +1,4 @@
-package com.example.cyrent;
+package com.example.cyrent.Model;
 
 public class CycleDetailUserData {
     String CycleBrandData;

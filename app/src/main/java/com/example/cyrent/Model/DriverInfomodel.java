@@ -1,7 +1,7 @@
 package com.example.cyrent.Model;
 
 public class DriverInfomodel {
-   private String first_Name,last_Name,PhoneNumber;
+   private String first_Name,last_Name,PhoneNumber,avatar;
    private double rating;
 
     public DriverInfomodel() {
@@ -38,5 +38,13 @@ public class DriverInfomodel {
 
     public void setRating(double rating) {
         this.rating = rating;
+    }
+
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
     }
 }

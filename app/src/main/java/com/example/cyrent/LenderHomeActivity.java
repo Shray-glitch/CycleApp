@@ -1,19 +1,28 @@
 package com.example.cyrent;
 
+import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Menu;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.example.cyrent.Utils.UserUtils;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 import androidx.navigation.NavController;
@@ -26,13 +35,25 @@ import androidx.appcompat.widget.Toolbar;
 
 import org.w3c.dom.Text;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class LenderHomeActivity extends AppCompatActivity {
 
+private static final int PICK_IMAGE_REQUEST=7172;
     private AppBarConfiguration mAppBarConfiguration;
 
     private DrawerLayout drawer;
     private NavigationView navigationView;
     private NavController navController;
+
+    private AlertDialog waitingDialog;
+    private StorageReference storageReference;
+
+    private Uri imageuri;
+    private ImageView img_avatar;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +75,92 @@ public class LenderHomeActivity extends AppCompatActivity {
         navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
+       init();
+
+
+
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode==PICK_IMAGE_REQUEST && resultCode == Activity.RESULT_OK)
+        {
+            if(data!=null && data.getData()!=null)
+            {
+                imageuri=data.getData();
+                img_avatar.setImageURI(imageuri);
+
+                showDialogUpload();
+            }
+        }
+    }
+
+    private void showDialogUpload() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(LenderHomeActivity.this);
+        builder.setTitle("Change Avatar")
+                .setMessage("Do you really want to Avatar?")
+                .setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                    }
+                }).setPositiveButton("UPLOAD", (dialogInterface, i) -> {
+                    if(imageuri!=null)
+                    {
+                        waitingDialog.setMessage("Uplaoding...");
+                        waitingDialog.show();
+
+                        String unique_name= FirebaseAuth.getInstance().getCurrentUser().getUid();
+                        StorageReference avatarFolder = storageReference.child("avatars/"+unique_name);
+
+                        avatarFolder.putFile(imageuri)
+                                .addOnFailureListener(e -> {
+                                    waitingDialog.dismiss();
+                                    Snackbar.make(drawer,e.getMessage(),Snackbar.LENGTH_SHORT).show();
+
+                                }).addOnCompleteListener(task -> {
+                                    if(task.isSuccessful())
+                                    {
+                                        avatarFolder.getDownloadUrl().addOnSuccessListener(uri -> {
+                                            Map<String,Object> updateData=new HashMap<>();
+                                            updateData.put("avatar",uri.toString());
+
+                                            UserUtils.updateUser(drawer,updateData);
+                                        });
+                                    }
+                                }).addOnProgressListener(taskSnapshot -> {
+                            double progress =(100.0 * taskSnapshot.getBytesTransferred() / taskSnapshot.getTotalByteCount());
+                            waitingDialog.setMessage(new StringBuilder("Uploading: ").append(progress).append("%"));
+
+                        });
+                    }
+                })
+                .setCancelable(false);
+
+        AlertDialog dialog = builder.create();
+        dialog.setOnShowListener(dialog1 -> {
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+                    .setTextColor(getResources().getColor(android.R.color.holo_red_dark, null ));
+            dialog.getButton(AlertDialog.BUTTON_NEGATIVE)
+                    .setTextColor(getResources().getColor(R.color.colorAccent, null));
+
+        });
+
+        dialog.show();
+
+    }
+
+    private void init() {
+        waitingDialog=new AlertDialog.Builder(this)
+                .setCancelable(false)
+                .setMessage("Waiting...")
+                .create();
+
+        storageReference= FirebaseStorage.getInstance().getReference();
+
+
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -62,13 +169,13 @@ public class LenderHomeActivity extends AppCompatActivity {
                 {
                     AlertDialog.Builder builder = new AlertDialog.Builder(LenderHomeActivity.this);
                     builder.setTitle("Sign Out")
-                    .setMessage("Do you really want to Sign Out?")
-                    .setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            dialogInterface.dismiss();
-                        }
-                    }).setPositiveButton("SIGN OUT", new DialogInterface.OnClickListener() {
+                            .setMessage("Do you really want to Sign Out?")
+                            .setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    dialogInterface.dismiss();
+                                }
+                            }).setPositiveButton("SIGN OUT", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
                             FirebaseAuth.getInstance().signOut();
@@ -101,15 +208,30 @@ public class LenderHomeActivity extends AppCompatActivity {
         View headerView = navigationView.getHeaderView(0);
         TextView txt_name = (TextView)headerView.findViewById(R.id.txt_name);
         TextView txt_phone = (TextView)headerView.findViewById(R.id.txt_phone);
-      //  TextView txt_star = (TextView)headerView.findViewById(R.id.txt_name);
+        TextView txt_star = (TextView)headerView.findViewById(R.id.txt_star);
+         img_avatar=(ImageView)headerView.findViewById(R.id.img_avatar);
 
         txt_name.setText(Common.buildWelcomeMessage());
         txt_phone.setText(Common.currentUser!=null ? Common.currentUser.getPhoneNumber() : "");
+        txt_star.setText(Common.currentUser!=null ?String.valueOf(Common.currentUser.getRating()) : "0.0");
 
+        img_avatar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent =new Intent();
+                intent.setType("image/*");
+                intent.setAction(Intent.ACTION_GET_CONTENT);
+                startActivityForResult(intent,PICK_IMAGE_REQUEST);
 
-
-
-
+            }
+        });
+        if(Common.currentUser !=null && Common.currentUser.getAvatar() !=null &&
+        !TextUtils.isEmpty(Common.currentUser.getAvatar()))
+        {
+            Glide.with(this)
+                    .load(Common.currentUser.getAvatar())
+                    .into(img_avatar);
+        }
     }
 
     @Override
