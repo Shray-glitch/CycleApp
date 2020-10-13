@@ -135,12 +135,12 @@ public class SplashScreen extends AppCompatActivity {
         driverInfoRef.child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        if(snapshot.exists())
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if(dataSnapshot.exists())
                         {
                             Toast.makeText(SplashScreen.this,"User already registered",Toast.LENGTH_SHORT).show();
-                           // DriverInfomodel driverInfomodel=snapshot.getValue(DriverInfomodel.class);
-                           // goToHomeActivity(driverInfomodel);
+                            DriverInfomodel driverInfomodel = dataSnapshot.getValue(DriverInfomodel.class);
+                            goToHomeActivity(driverInfomodel);
 
 
                         }
@@ -160,13 +160,13 @@ public class SplashScreen extends AppCompatActivity {
 
 
     }
-/*
+
     private void goToHomeActivity(DriverInfomodel driverInfomodel) {
-        com.example.cyrent.Common.currentUser=driverInfomodel;
-        startActivity(new Intent(SplashScreen.this,LenderHomeActivity.class));
+        com.example.cyrent.Common.currentUser = driverInfomodel;
+        startActivity(new Intent(SplashScreen.this, LenderHomeActivity.class));
         finish();
     }
-*/
+
     private void showRegisterLayout()
     {
         AlertDialog.Builder builder=new AlertDialog.Builder(this,R.style.DialogTheme);
@@ -225,8 +225,9 @@ public class SplashScreen extends AppCompatActivity {
                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void aVoid) {
-                                Toast.makeText(SplashScreen.this,"Register Succesfully!",Toast.LENGTH_SHORT).show();
+                                Toast.makeText(SplashScreen.this,"Register Successfully!",Toast.LENGTH_SHORT).show();
                                 dialog.dismiss();
+                                goToHomeActivity(model);
 
                             }
                         });

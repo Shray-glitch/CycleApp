@@ -4,8 +4,8 @@ import com.example.cyrent.Model.DriverInfomodel;
 
 public class Common {
     public static final String DRIVER_INFO_REFERENCE="DriverInfo";
-  //  public static final String DRIVER_LOCATION_REFERENCES ="LenderLocation" ;
-   // public static DriverInfomodel currentUser;
+   public static final String DRIVER_LOCATION_REFERENCES ="LenderLocation" ;
+    public static DriverInfomodel currentUser;
 
     /*
       public static String buildWelcomeMessage() {
