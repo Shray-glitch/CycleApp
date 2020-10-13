@@ -34,7 +34,6 @@
 
         <activity
             android:name=".LenderHomeActivity"
-            android:label="@string/title_activity_lender_home"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".Lender_CycleDetail"
             android:theme="@style/AppTheme.NoActionBar"/>

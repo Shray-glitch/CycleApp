@@ -72,7 +72,7 @@ public class SplashScreen extends AppCompatActivity {
 
     private void delaySplashScreen(){
         progress_Bar.setVisibility(View.VISIBLE);
-        Completable.timer(3, TimeUnit.SECONDS, AndroidSchedulers.mainThread())
+        Completable.timer(2, TimeUnit.SECONDS, AndroidSchedulers.mainThread())
                 .subscribe(new Action() {
                     @Override
                     public void run() throws Exception {
@@ -116,8 +116,7 @@ public class SplashScreen extends AppCompatActivity {
             FirebaseUser user= myFirebaseAuth.getCurrentUser();
             if(user !=null){
                 checkUserFromFirebase();
-                Intent Lender_CycleDetail = new Intent(SplashScreen.this, LenderHomeActivity.class) ;
-                startActivity(Lender_CycleDetail);
+
 
             }
             else
@@ -126,7 +125,7 @@ public class SplashScreen extends AppCompatActivity {
     }
 
     private void checkUserFromFirebase() {
-        driverInfoRef.child(mAuth.getInstance().getCurrentUser().getUid())
+        driverInfoRef.child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -158,16 +157,16 @@ public class SplashScreen extends AppCompatActivity {
         AlertDialog.Builder builder=new AlertDialog.Builder(this,R.style.DialogTheme);
         View itemView = LayoutInflater.from(this).inflate(R.layout.activity_sign_up,null);
 
-        TextInputEditText edt_first_name=itemView.findViewById(R.id.FirstName);
-        TextInputEditText edt_last_name=itemView.findViewById(R.id.LastName);
-        TextInputEditText edt_phone=itemView.findViewById(R.id.PhoneNo);
+        TextInputEditText edt_first_name=(TextInputEditText)itemView.findViewById(R.id.FirstName);
+        TextInputEditText edt_last_name=(TextInputEditText)itemView.findViewById(R.id.LastName);
+        TextInputEditText edt_phone=(TextInputEditText)itemView.findViewById(R.id.PhoneNo);
 
-        Button btn_continue = itemView.findViewById(R.id.continue_btn);
+        Button btn_continue = (Button) itemView.findViewById(R.id.continue_btn);
 
         //set data
-        if(mAuth.getInstance().getCurrentUser().getPhoneNumber()!=null &&
-        !TextUtils.isEmpty(mAuth.getInstance().getCurrentUser().getPhoneNumber()))
-            edt_phone.setText(mAuth.getInstance().getCurrentUser().getPhoneNumber());
+        if(FirebaseAuth.getInstance().getCurrentUser().getPhoneNumber()!=null &&
+        !TextUtils.isEmpty(FirebaseAuth.getInstance().getCurrentUser().getPhoneNumber()))
+            edt_phone.setText(FirebaseAuth.getInstance().getCurrentUser().getPhoneNumber());
 
         //set view
         builder.setView(itemView);
@@ -197,7 +196,7 @@ public class SplashScreen extends AppCompatActivity {
                 model.setPhoneNumber(edt_phone.getText().toString());
                 model.setRating(0.0);
 
-                driverInfoRef.child(mAuth.getInstance().getCurrentUser().getUid())
+                driverInfoRef.child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                         .setValue(model)
                         .addOnFailureListener(e ->
                         {
