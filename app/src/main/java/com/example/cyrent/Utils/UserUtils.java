@@ -37,7 +37,8 @@ public class UserUtils {
                 .getReference(Common.TOKEN_REFERENCE)
                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                 .setValue(tokenModel)
-                .addOnFailureListener(e -> Toast.makeText(context,e.getMessage(),Toast.LENGTH_SHORT).show()).addOnSuccessListener(aVoid -> {
+                .addOnFailureListener(e -> Toast.makeText(context,e.getMessage(),Toast.LENGTH_SHORT).show())
+                .addOnSuccessListener(aVoid -> {
 
                 });
 

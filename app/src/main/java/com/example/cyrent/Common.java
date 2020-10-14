@@ -45,7 +45,7 @@ public class Common {
         {
             NotificationChannel notificationChannel=new NotificationChannel(NOTIFICATION_CHANNEL_ID,
                     "CyRent",NotificationManager.IMPORTANCE_HIGH);
-            notificationChannel.setDescription("#CyRent");
+            notificationChannel.setDescription("CyRent");
             notificationChannel.enableLights(true);
             notificationChannel.setLightColor(Color.RED);
             notificationChannel.setVibrationPattern(new long[]{0,1000,500,1000});

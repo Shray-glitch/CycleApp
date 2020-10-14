@@ -42,6 +42,43 @@
           ]
         }
       }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:484595095380:android:1d6849691a782034fe5ac1",
+        "android_client_info": {
+          "package_name": "com.example.cyrent_rider"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "484595095380-980d075dj3lhb2t1n7kkduvv0efk5o2j.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.cyrent_rider",
+            "certificate_hash": "e2d652ceca337f96c3efb312fda2caa7c55b780c"
+          }
+        },
+        {
+          "client_id": "484595095380-6suh0sfhjs3ivgqa43rn1lfpafahuv12.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA1kua52Jqa6qDIYLQ7U9GQ3vdxoZEaD4A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "484595095380-6suh0sfhjs3ivgqa43rn1lfpafahuv12.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
     }
   ],
   "configuration_version": "1"
