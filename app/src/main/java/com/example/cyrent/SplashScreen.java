@@ -120,7 +120,7 @@ public class SplashScreen extends AppCompatActivity {
             if(user !=null)
             {
                 //update token
-                FirebaseInstanceId.getInstance()
+              FirebaseInstanceId.getInstance()
                         .getInstanceId()
                         .addOnFailureListener(e -> Toast.makeText(SplashScreen.this,e.getMessage(),Toast.LENGTH_SHORT).show())
                         .addOnSuccessListener(instanceIdResult -> {
