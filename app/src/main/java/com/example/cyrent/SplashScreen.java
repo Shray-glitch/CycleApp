@@ -19,6 +19,7 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.example.cyrent.Model.DriverInfomodel;
 import com.example.cyrent.Utils.UserUtils;
 import com.firebase.ui.auth.AuthMethodPickerLayout;
@@ -84,13 +85,18 @@ public class SplashScreen extends AppCompatActivity {
     }
 
    @BindView(R.id.progress_bar)
-    ProgressBar progress_Bar;
+
+   ProgressBar progress_Bar;
+
+
     FirebaseDatabase database;
     DatabaseReference driverInfoRef;
 
 
     private void delaySplashScreen(){
-         progress_Bar.setVisibility(View.VISIBLE);
+       progress_Bar.setVisibility(View.VISIBLE);
+
+
         Completable.timer(3,TimeUnit.SECONDS,
                 AndroidSchedulers.mainThread())
                 .subscribe(new Action() {

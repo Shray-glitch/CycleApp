@@ -101,15 +101,11 @@ private static final int PICK_IMAGE_REQUEST=7172;
         AlertDialog.Builder builder = new AlertDialog.Builder(LenderHomeActivity.this);
         builder.setTitle("Change Avatar")
                 .setMessage("Do you really want to Avatar?")
-                .setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        dialogInterface.dismiss();
-                    }
-                }).setPositiveButton("UPLOAD", (dialogInterface, i) -> {
+                .setNegativeButton("CANCEL", (dialogInterface, i) -> dialogInterface.dismiss())
+                .setPositiveButton("UPLOAD", (dialogInterface, i) -> {
                     if(imageuri!=null)
                     {
-                        waitingDialog.setMessage("Uplaoding...");
+                        waitingDialog.setMessage("Uploading...");
                         waitingDialog.show();
 
                         String unique_name= FirebaseAuth.getInstance().getCurrentUser().getUid();
@@ -133,6 +129,7 @@ private static final int PICK_IMAGE_REQUEST=7172;
                                 }).addOnProgressListener(taskSnapshot -> {
                             double progress =(100.0 * taskSnapshot.getBytesTransferred() / taskSnapshot.getTotalByteCount());
                             waitingDialog.setMessage(new StringBuilder("Uploading: ").append(progress).append("%"));
+                            waitingDialog.dismiss();// may be wrong , if not working delete it plz
 
                         });
                     }

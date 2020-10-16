@@ -70,6 +70,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     private LocationRequest locationRequest;
     private LocationCallback locationCallback;
     SupportMapFragment mapFragment;
+    private boolean isFirstTime=true;
 
 
     //Online System   ;  driver == lender
@@ -79,7 +80,10 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         @Override
         public void onDataChange(@NonNull DataSnapshot datasnapshot) {
             if (datasnapshot.exists() && currentUserRef!=null)
+            {
                 currentUserRef.onDisconnect().removeValue();
+                isFirstTime=true;
+            }
         }
 
         @Override
@@ -177,7 +181,13 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                                 if (error != null)
                                     Snackbar.make(mapFragment.getView(), error.getMessage(), Snackbar.LENGTH_LONG).show();
                                 else
-                                    Snackbar.make(mapFragment.getView(), "You're Online", Snackbar.LENGTH_LONG).show();
+                                {
+                                    if(isFirstTime)
+                                    {
+                                        Snackbar.make(mapFragment.getView(), "You're Online", Snackbar.LENGTH_LONG).show();
+                                        isFirstTime=false;
+                                    }
+                                }
                             });
 
                     registerOnlineSystem();//only register when we done setup
