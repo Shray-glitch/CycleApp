@@ -37,6 +37,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -82,7 +83,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
             if (datasnapshot.exists() && currentUserRef!=null)
             {
                 currentUserRef.onDisconnect().removeValue();
-                isFirstTime=true;
+
             }
         }
 
@@ -180,14 +181,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                             (key, error) -> {
                                 if (error != null)
                                     Snackbar.make(mapFragment.getView(), error.getMessage(), Snackbar.LENGTH_LONG).show();
-                                else
-                                {
-                                    if(isFirstTime)
-                                    {
-                                        Snackbar.make(mapFragment.getView(), "You're Online", Snackbar.LENGTH_LONG).show();
-                                        isFirstTime=false;
-                                    }
-                                }
+
                             });
 
                     registerOnlineSystem();//only register when we done setup
@@ -282,6 +276,12 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
                     }
                 }).check();
+
+
+        Snackbar.make(mapFragment.getView(), "You're Online", Snackbar.LENGTH_LONG).show();
+
+
+
 
     }
 }
