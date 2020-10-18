@@ -12,8 +12,7 @@ import android.os.Build;
 
 import androidx.core.app.NotificationCompat;
 
-import com.example.cyrent.Model.DriverInfomodel;
-import com.example.cyrent.Services.MyFirebaseMessagingService;
+import com.example.cyrent.Model.DriverInfoModel;
 
 public class Common {
     public static final String DRIVER_INFO_REFERENCE="DriverInfo";
@@ -21,16 +20,16 @@ public class Common {
     public static final String TOKEN_REFERENCE = "Token" ;
     public static final String NOTI_TITLE = "title";
     public static final String NOTI_CONTENT ="body" ;
-    public static DriverInfomodel currentUser;
+    public static DriverInfoModel currentUser;
 
 
       public static CharSequence buildWelcomeMessage() {   // string not working so CharSequence
         if(Common.currentUser != null)
         {
             return new StringBuilder("Welcome ")
-                    .append(Common.currentUser.getFirst_Name())
+                    .append(Common.currentUser.getFirstName())
                     .append(" ")
-                    .append(Common.currentUser.getLast_Name());
+                    .append(Common.currentUser.getLastName());
         }
         else return "";
     }

@@ -5,27 +5,21 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.Toast;
 
-import com.airbnb.lottie.LottieAnimationView;
-import com.example.cyrent.Model.DriverInfomodel;
+import com.example.cyrent.Model.DriverInfoModel;
 import com.example.cyrent.Utils.UserUtils;
 import com.firebase.ui.auth.AuthMethodPickerLayout;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.IdpResponse;
-import com.google.android.gms.common.internal.service.Common;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.textfield.TextInputEditText;
@@ -37,7 +31,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
-import com.google.firebase.iid.InstanceIdResult;
 
 import java.util.Arrays;
 import java.util.List;
@@ -48,8 +41,6 @@ import butterknife.ButterKnife;
 import io.reactivex.Completable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Action;
-
-import static com.google.android.gms.common.internal.service.Common.*;
 
 
 public class SplashScreen extends AppCompatActivity {
@@ -97,7 +88,7 @@ public class SplashScreen extends AppCompatActivity {
        progress_Bar.setVisibility(View.VISIBLE);
 
 
-        Completable.timer(3,TimeUnit.SECONDS,
+        Completable.timer(1,TimeUnit.SECONDS,
                 AndroidSchedulers.mainThread())
                 .subscribe(new Action() {
                     @Override
@@ -149,7 +140,7 @@ public class SplashScreen extends AppCompatActivity {
                         if(dataSnapshot.exists())
                         {
                             Toast.makeText(SplashScreen.this,"User already registered",Toast.LENGTH_SHORT).show();
-                            DriverInfomodel driverInfomodel = dataSnapshot.getValue(DriverInfomodel.class);
+                            DriverInfoModel driverInfomodel = dataSnapshot.getValue(DriverInfoModel.class);
                             goToHomeActivity(driverInfomodel);
 
 
@@ -171,7 +162,7 @@ public class SplashScreen extends AppCompatActivity {
 
     }
 
-    private void goToHomeActivity(DriverInfomodel driverInfomodel) {
+    private void goToHomeActivity(DriverInfoModel driverInfomodel) {
         com.example.cyrent.Common.currentUser = driverInfomodel;
         startActivity(new Intent(SplashScreen.this, LenderHomeActivity.class));
         finish();
@@ -216,9 +207,9 @@ public class SplashScreen extends AppCompatActivity {
             }
             else
             {
-                DriverInfomodel model=new DriverInfomodel();
-                model.setFirst_Name(edt_first_name.getText().toString());
-                model.setLast_Name(edt_last_name.getText().toString());
+                DriverInfoModel model=new DriverInfoModel();
+                model.setFirstName(edt_first_name.getText().toString());
+                model.setLastName(edt_last_name.getText().toString());
                 model.setPhoneNumber(edt_phone.getText().toString());
                 model.setRating(0.0);
 
