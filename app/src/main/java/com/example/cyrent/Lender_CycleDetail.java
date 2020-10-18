@@ -16,13 +16,12 @@ import com.google.firebase.database.FirebaseDatabase;
 
 public class Lender_CycleDetail extends AppCompatActivity {
     boolean isCheckDone1 = false;
-    boolean isCheckDone2 = false;
-    boolean isCheckDone3 = false;
+
     boolean isCheckDone4 = false;
     boolean isCheckDone5 = false;
     boolean isCheckDone6 = false;
     private EditText CycleBrand;
-    private EditText CycleAge;
+;
     private FirebaseAuth mAuth;
     private Button goBtn;
     FirebaseDatabase myDatabase;
@@ -34,17 +33,15 @@ public class Lender_CycleDetail extends AppCompatActivity {
         setContentView(R.layout.activity_lender__cycle_detail);
 
         CycleBrand=findViewById(R.id.brand);
-        CycleAge=findViewById(R.id.age);
+
         goBtn= (Button) findViewById(R.id.go_btn);
 
         String CycleBrandData=CycleBrand.getText().toString();
-        String CycleAgeData=CycleAge.getText().toString();
+
         boolean  GearData=isCheckDone1;
-        boolean  BottleHolderData=isCheckDone1;
-        boolean  HeadLightData=isCheckDone1;
-        boolean  MudGuardData=isCheckDone1;
-        boolean  BellData=isCheckDone1;
-        boolean  CarrierData=isCheckDone1;
+        boolean  MudGuardData=isCheckDone4;
+        boolean  BellData=isCheckDone5;
+        boolean  CarrierData=isCheckDone6;
 
 
 
@@ -64,36 +61,7 @@ public class Lender_CycleDetail extends AppCompatActivity {
                 }
             }
         });
-        final LottieAnimationView lottieCheckDone2=findViewById(R.id.lottieCheck2);
-        lottieCheckDone2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(isCheckDone1){
-                    lottieCheckDone2.setSpeed(-3);
-                    lottieCheckDone2.playAnimation();
-                    isCheckDone2=false;
-                }else{
-                    lottieCheckDone2.setSpeed(3);
-                    lottieCheckDone2.playAnimation();
-                    isCheckDone2=true;
-                }
-            }
-        });
-        final LottieAnimationView lottieCheckDone3=findViewById(R.id.lottieCheck3);
-        lottieCheckDone3.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(isCheckDone3){
-                    lottieCheckDone3.setSpeed(-3);
-                    lottieCheckDone3.playAnimation();
-                    isCheckDone3=false;
-                }else{
-                    lottieCheckDone3.setSpeed(3);
-                    lottieCheckDone3.playAnimation();
-                    isCheckDone3=true;
-                }
-            }
-        });
+
         final LottieAnimationView lottieCheckDone4=findViewById(R.id.lottieCheck4);
         lottieCheckDone4.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -144,15 +112,13 @@ public class Lender_CycleDetail extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 String CycleBrandData=CycleBrand.getText().toString();
-                String CycleAgeData=CycleAge.getText().toString();
-                boolean  GearData=isCheckDone1;
-                boolean  BottleHolderData=isCheckDone1;
-                boolean  HeadLightData=isCheckDone1;
-                boolean  MudGuardData=isCheckDone1;
-                boolean  BellData=isCheckDone1;
-                boolean  CarrierData=isCheckDone1;
 
-                final CycleDetailUserData cycleDetailRecord= new CycleDetailUserData(CycleBrandData,CycleAgeData,GearData,BottleHolderData,HeadLightData,MudGuardData,BellData,CarrierData);
+                boolean  GearData=isCheckDone1;
+                boolean  MudGuardData=isCheckDone4;
+                boolean  BellData=isCheckDone5;
+                boolean  CarrierData=isCheckDone6;
+
+                final CycleDetailUserData cycleDetailRecord= new CycleDetailUserData(CycleBrandData,GearData,MudGuardData,BellData,CarrierData);
 
                 if (CycleBrandData.isEmpty())
                 {

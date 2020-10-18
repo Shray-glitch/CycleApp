@@ -9,10 +9,13 @@ import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Build;
+import android.widget.TextView;
 
 import androidx.core.app.NotificationCompat;
 
 import com.example.cyrent.Model.DriverInfoModel;
+
+import java.util.Calendar;
 
 public class Common {
     public static final String DRIVER_INFO_REFERENCE="DriverInfo";
@@ -32,6 +35,15 @@ public class Common {
                     .append(Common.currentUser.getLastName());
         }
         else return "";
+    }
+
+    public static void setWelcomeMessage(TextView txt_welcome) {
+        int hour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
+        if(hour >= 1 && hour <= 12)
+            txt_welcome.setText(new StringBuilder("Good Morning."));
+        else if(hour >= 13 && hour <= 17)
+            txt_welcome.setText(new StringBuilder("Good Afternoon."));
+        else txt_welcome.setText(new StringBuilder("Good Evening."));
     }
 
    public static void showNotification(Context context, int id, String title, String body, Intent intent) {

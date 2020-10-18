@@ -1,6 +1,7 @@
 package com.example.cyrent.ui.home;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
@@ -10,6 +11,7 @@ import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -23,6 +25,9 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.example.cyrent.Common;
+import com.example.cyrent.LenderHomeActivity;
+import com.example.cyrent.Lender_CycleDetail;
+import com.example.cyrent.Model.CycleDetailUserData;
 import com.example.cyrent.R;
 import com.firebase.geofire.GeoFire;
 import com.firebase.geofire.GeoLocation;
@@ -39,6 +44,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnCanceledListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.snackbar.Snackbar;
@@ -54,16 +60,29 @@ import com.karumi.dexter.listener.PermissionDeniedResponse;
 import com.karumi.dexter.listener.PermissionGrantedResponse;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.single.PermissionListener;
+import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
     private GoogleMap mMap;
 
     private HomeViewModel homeViewModel;
+
+    @BindView(R.id.activity_main)
+    SlidingUpPanelLayout slidingUpPanelLayout;
+    @BindView(R.id.txt_welcome)
+    TextView txt_welcome;
+    Button addCycleBtn;
+
+
 
 
     //Location
@@ -114,13 +133,24 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         onlineRef.addValueEventListener(onLineValueEventListener);
     }
 
+
+
+
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         homeViewModel = new ViewModelProvider(this).get(HomeViewModel.class);
         View root = inflater.inflate(R.layout.fragment_home, container, false);
 
+        addCycleBtn= root.findViewById(R.id.addCycle);
+
+
+
 
         init();
+
+        initViews(root);
+
+
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
@@ -128,9 +158,22 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         return root;
     }
 
+    private void initViews(View root) {
+        ButterKnife.bind(this,root);
+        Common.setWelcomeMessage(txt_welcome);
+
+
+
+    }
+
+
     private void init() {
 
         onlineRef = FirebaseDatabase.getInstance().getReference().child(".info/connected");
+
+
+
+
 
 
         if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
