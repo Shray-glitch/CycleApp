@@ -1,12 +1,19 @@
 package com.example.cyrent.Model;
 
 public class DriverInfoModel {
-   private String first_Name,last_Name,PhoneNumber,avatar;
+   private String first_Name,last_Name,PhoneNumber,avatar,cycle;
    private double rating;
 
     public DriverInfoModel() {
     }
 
+    public String getCycle() {
+        return cycle;
+    }
+
+    public void setCycle(String cycle) {
+        this.cycle = cycle;
+    }
 
     public String getFirstName() {
         return first_Name;

@@ -172,6 +172,14 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         onlineRef = FirebaseDatabase.getInstance().getReference().child(".info/connected");
 
 
+        addCycleBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), Lender_CycleDetail.class);
+                startActivity(intent);
+
+            }
+        });
 
 
 

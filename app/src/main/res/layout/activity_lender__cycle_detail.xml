@@ -12,7 +12,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Welcome"
+        android:text="Hola amigos"
         android:textSize="40sp"
         />
 
@@ -24,6 +24,12 @@
         android:layout_marginTop="-20dp"
         android:textSize="18dp"/>
 
+
+    <ImageView
+        android:id="@+id/cycle_photo"
+        android:layout_width="249dp"
+        android:layout_height="143dp"
+        app:srcCompat="@android:drawable/ic_menu_add" />
 
     <EditText
         android:id="@+id/brand"
@@ -115,13 +121,6 @@
         android:text="GO"
         android:background="@drawable/signup_btn"
         android:textColor="#000" />
-
-
-
-
-
-
-
 
 
 </LinearLayout>
